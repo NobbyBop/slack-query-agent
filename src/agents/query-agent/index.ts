@@ -38,8 +38,9 @@ export default async function Agent(
   resp: AgentResponse,
   ctx: AgentContext
 ) {
-  const userQuery = (await req.data.text()) ?? "";
-  const userId = "default"; // In production, this should come from user authentication
+  const requestData = (await req.data.json()) as any;
+  const userId = requestData.userId || "default";
+  const userQuery = requestData.userQuery || "";
 
   ctx.logger.info("Processing Slack query:", userQuery);
 
@@ -467,7 +468,6 @@ async function storeMemory(
     // Create or get user
     await zep.user.add({
       userId: userId,
-      firstName: "User", // Default name, will be replaced when we get actual user info
     });
 
     // Generate a thread ID for this conversation
