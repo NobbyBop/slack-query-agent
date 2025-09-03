@@ -1,109 +1,57 @@
-<div align="center">
-    <img src="https://raw.githubusercontent.com/agentuity/cli/refs/heads/main/.github/Agentuity.png" alt="Agentuity" width="100"/> <br/>
-    <strong>Build Agents, Not Infrastructure</strong> <br/>
-    <br/>
-        <a target="_blank" href="https://app.agentuity.com/deploy" alt="Agentuity">
-            <img src="https://app.agentuity.com/img/deploy.svg" /> 
-        </a>
-    <br />
-</div>
+# Slack Query Agent
 
-# 🤖 Bun Agent Project
+An intelligent Agentuity agent that searches through your Slack conversation history to find and summarize relevant information based on natural language queries.
 
-Welcome to your Agentuity Bun Agent project! This README provides essential information to help you get started with developing, testing, and deploying your AI agents.
+## What it does
 
-## 📋 Prerequisites
+The Slack Query Agent helps you quickly find information from your Slack workspace by:
 
-Before you begin, ensure you have the following installed:
+- **Smart Channel Selection**: Automatically identifies the most relevant channels for your query
+- **Intelligent Date Parsing**: Understands natural language date references like "last week", "yesterday", "past 2 months"
+- **Message Filtering**: Uses AI to find the most relevant messages from conversation history
+- **Context-Aware Search**: Remembers your previous interactions using Zep memory to provide personalized results
+- **Comprehensive Summaries**: Generates clear, helpful responses with message links and user mentions
 
-- **Bun**: Version 1.2.4 or higher
+## How to use
 
-## 🚀 Getting Started
+Simply ask natural language questions about your Slack conversations:
 
-### Authentication
+**Examples:**
 
-Before using Agentuity, you need to authenticate:
+- "Find discussions about the quarterly planning meeting"
+- "Search for messages about API integration issues in the #engineering channel"
+- "What did we decide about the new feature last week?"
+- "Show me recent conversations about deployment problems"
 
-```bash
-agentuity login
-```
+## Features
 
-This command will open a browser window where you can log in to your Agentuity account.
+### Memory Integration
 
-### Creating a New Agent
+The agent remembers your previous queries and responses using Zep, allowing it to:
 
-To create a new agent in your project:
+- Provide more personalized search results
+- Understand context from past conversations
+- Avoid repeating information you've already received
 
-```bash
-agentuity agent new
-```
+### Advanced Search Processing
 
-Follow the interactive prompts to configure your agent.
+1. **Query Analysis**: Converts your natural language query into specific search instructions
+2. **Channel Selection**: Identifies 1-3 most relevant channels to search
+3. **Date Extraction**: Accurately calculates date ranges from natural language
+4. **Message Relevance**: Filters messages to show only the most pertinent information
+5. **Smart Summarization**: Generates comprehensive answers with links and mentions
 
-### Development Mode
+## Setup
 
-Run your project in development mode with:
+Requires the following environment variables:
 
-```bash
-agentuity dev
-```
+- `COMPOSIO_API_KEY` - For Slack integration
+- `OPENAI_API_KEY` - For AI processing
+- `ZEP_API_KEY` - For memory storage
 
-This will start your project and open a new browser window connecting your agent to the Agentuity Console in DevMode, allowing you to test and debug your agent in real-time.
+## Technology Stack
 
-## 🌐 Deployment
-
-When you're ready to deploy your agent to the Agentuity Cloud:
-
-```bash
-agentuity deploy
-```
-
-This command will bundle your agent and deploy it to the cloud, making it accessible via the Agentuity platform.
-
-## 📚 Project Structure
-
-```
-├── agents/             # Agent definitions and implementations
-├── node_modules/       # Dependencies
-├── package.json        # Project dependencies and scripts
-└── agentuity.yaml      # Agentuity project configuration
-```
-
-## 🔧 Configuration
-
-Your project configuration is stored in `agentuity.yaml`. This file defines your agents, development settings, and deployment configuration.
-
-## 🛠️ Advanced Usage
-
-### Environment Variables
-
-You can set environment variables for your project:
-
-```bash
-agentuity env set KEY VALUE
-```
-
-### Secrets Management
-
-For sensitive information, use secrets:
-
-```bash
-agentuity env set --secret KEY VALUE
-```
-
-## 📖 Documentation
-
-For comprehensive documentation on the Agentuity JavaScript SDK, visit:
-[https://agentuity.dev/SDKs/javascript](https://agentuity.dev/SDKs/javascript)
-
-## 🆘 Troubleshooting
-
-If you encounter any issues:
-
-1. Check the [documentation](https://agentuity.dev/SDKs/javascript)
-2. Join our [Discord community](https://discord.gg/agentuity) for support
-3. Contact the Agentuity support team
-
-## 📝 License
-
-This project is licensed under the terms specified in the LICENSE file.
+- **Agentuity SDK** - Agent framework
+- **Composio** - Slack API integration
+- **OpenAI GPT-4** - Natural language processing
+- **Zep Cloud** - Memory and context management

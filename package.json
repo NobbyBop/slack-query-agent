@@ -28,7 +28,13 @@
   },
   "dependencies": {
     "@agentuity/sdk": "^0.0.144",
-    "openai": "^5.18.1"
+    "@composio/core": "^0.1.48",
+    "@composio/openai": "^0.1.48",
+    "@getzep/zep-cloud": "^3.4.1",
+    "@types/uuid": "^10.0.0",
+    "openai": "^5.18.1",
+    "source-map-js": "^1.2.1",
+    "uuid": "^11.1.0"
   },
   "module": "index.ts"
 }
