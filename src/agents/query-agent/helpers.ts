@@ -71,6 +71,12 @@ export function convertToUnixTimestamps(dateStrings: {
   const startDate = new Date(dateStrings.startDate);
   const endDate = new Date(dateStrings.endDate);
 
+  // Set to beginning of start day (00:00:00)
+  startDate.setHours(0, 0, 0, 0);
+  
+  // Set to end of end day (23:59:59)
+  endDate.setHours(23, 59, 59, 999);
+
   // Convert to Unix timestamps (seconds, not milliseconds)
   const oldest = Math.floor(startDate.getTime() / 1000);
   const latest = Math.floor(endDate.getTime() / 1000);

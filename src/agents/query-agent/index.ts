@@ -58,8 +58,14 @@ export default async function Agent(
   ctx.logger.info("Processing Slack query:", userQuery);
 
   // Get memory context for this user
-  const memoryContext = await getMemoryContext(userId, userQuery, ctx);
-  const threadHistory = await getThreadHistory(userId, ctx);
+  let memoryContext;
+  let threadHistory;
+  try {
+    memoryContext = await getMemoryContext(userId, userQuery, ctx);
+    threadHistory = await getThreadHistory(userId, ctx);
+  } catch {
+    return resp.text("No thread found, create one with `~thread -c`.");
+  }
 
   // Convert user's query and Zep context into search instructions.
   const searchInstructions = await generateSearchInstructions(
