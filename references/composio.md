@@ -293,7 +293,7 @@ composio = Composio()
 
 result = composio.tools.execute(
 "GOOGLEDRIVE_UPLOAD_FILE",
-user_id="default",
+user_id="dog",
 arguments={
 "file_to_upload": os.path.join(os.getcwd(), "document.pdf") # Local file path
 }
@@ -342,7 +342,7 @@ When a tool returns file outputs, the SDK automatically:
 # Download a file from Google Drive
 result = composio.tools.execute(
     "GOOGLEDRIVE_DOWNLOAD_FILE",
-    user_id="default",
+    user_id="dog",
     arguments={
         "file_id": "your_file_id"
     }

@@ -11,8 +11,8 @@ export async function handleCommand(
   userQuery: string,
   ctx: AgentContext
 ): Promise<string> {
-  if (userQuery.startsWith("/thread")) {
-    const commandString = userQuery.slice("/thread".length).trim();
+  if (userQuery.startsWith("~thread")) {
+    const commandString = userQuery.slice("~thread".length).trim();
     let flags: string[] = [];
     let idArg: string = "";
 
@@ -64,7 +64,7 @@ export async function handleCommand(
         i++;
       }
       if (flags.length === 0) {
-        return `/thread <flag>
+        return `~thread <flag>
         -c: start a new thread
         -l: list threads
         -s <id>: switch to thread with id`;
@@ -82,8 +82,8 @@ export async function handleCommand(
         return await switchThreads(userId, idArg, ctx);
       }
     }
-  } else if (userQuery.startsWith("/help")) {
-    return `/thread <flag>
+  } else if (userQuery.startsWith("~help")) {
+    return `~thread <flag>
     -c: start a new thread
     -l: list threads
     -s <id>: switch to thread with id`;
@@ -130,7 +130,10 @@ export async function createThread(
   }
 }
 
-export async function listThreads(userId: string, ctx: AgentContext): Promise<string> {
+export async function listThreads(
+  userId: string,
+  ctx: AgentContext
+): Promise<string> {
   try {
     let dataRes = await ctx.kv.get("slackq-threads", userId);
     if (!dataRes.exists) {

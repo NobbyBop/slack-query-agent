@@ -30,6 +30,26 @@ export async function getMemoryContext(
   }
 }
 
+export async function getThreadHistory(userId: string, ctx: AgentContext) {
+  try {
+    // Get current thread ID
+    const currentThreadRes = await ctx.kv.get("slackq-current-thread", userId);
+    if (!currentThreadRes.exists) {
+      ctx.logger.info(
+        "No current thread found for user. Create one with /thread -c."
+      );
+      return "";
+    }
+    const threadId = await currentThreadRes.data.text();
+
+    // Get relevant memory from Zep
+    const memory = await zep.thread.get(threadId);
+    return memory.messages || "No history found.";
+  } catch (error) {
+    ctx.logger.error("Error retrieving memory context:", error);
+    return "";
+  }
+}
 export async function storeMemory(
   userId: string,
   userQuery: string,

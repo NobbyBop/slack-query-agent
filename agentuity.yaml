@@ -77,3 +77,5 @@ agents:
     id: agent_d1b6845019b5908883217dc6f325ee49
     # The name of the Agent which is editable
     name: query-agent
+  - id: agent_8d99238342022477ead45f300e7a5b87
+    name: slackbot

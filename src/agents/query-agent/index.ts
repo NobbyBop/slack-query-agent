@@ -2,9 +2,13 @@ import type { AgentContext, AgentRequest, AgentResponse } from "@agentuity/sdk";
 import OpenAI from "openai";
 import { Composio } from "@composio/core";
 import { OpenAIProvider } from "@composio/openai";
-import { getMemoryContext, storeMemory } from "./memory";
+import { getMemoryContext, getThreadHistory, storeMemory } from "./memory";
 import { handleCommand } from "./threads";
-import { extractDateStrings, convertToUnixTimestamps, getTodayDateString } from "./helpers";
+import {
+  extractDateStrings,
+  convertToUnixTimestamps,
+  getTodayDateString,
+} from "./helpers";
 import type { AgentInput } from "./helpers";
 
 const openai = new OpenAI();
@@ -14,7 +18,6 @@ const composio = new Composio({
   provider: new OpenAIProvider(),
 });
 
-
 export const welcome = () => {
   return {
     welcome:
@@ -22,14 +25,14 @@ export const welcome = () => {
     prompts: [
       {
         data: JSON.stringify({
-          userId: "user123",
+          userId: "dog",
           userQuery: "Find discussions about the quarterly planning meeting",
         }),
         contentType: "application/json",
       },
       {
         data: JSON.stringify({
-          userId: "user123",
+          userId: "dog",
           userQuery:
             "Search for messages about API integration issues in the #engineering channel",
         }),
@@ -45,10 +48,10 @@ export default async function Agent(
   ctx: AgentContext
 ) {
   const requestData = (await req.data.json()) as AgentInput;
-  const userId = requestData.userId || "default";
+  const userId = requestData.userId || "dog";
   const userQuery = requestData.userQuery || "";
 
-  if (userQuery.startsWith("/")) {
+  if (userQuery.startsWith("~")) {
     let textResult = await handleCommand(userId, userQuery, ctx);
     return resp.text(textResult);
   }
@@ -56,17 +59,19 @@ export default async function Agent(
 
   // Get memory context for this user
   const memoryContext = await getMemoryContext(userId, userQuery, ctx);
+  const threadHistory = await getThreadHistory(userId, ctx);
 
   // Convert user's query and Zep context into search instructions.
   const searchInstructions = await generateSearchInstructions(
     userQuery,
     memoryContext || "",
+    threadHistory,
     ctx
   );
 
   // Use search instructions to select relevant channels.
   const relevantChannels = await selectRelevantChannels(
-    userId,
+    "dog",
     searchInstructions,
     ctx
   );
@@ -80,7 +85,7 @@ export default async function Agent(
   for (const channel of relevantChannels) {
     ctx.logger.info(`Searching in channel: ${channel.name}`);
     const messages = await searchChannelHistory(
-      userId,
+      "dog",
       channel,
       searchInstructions,
       ctx
@@ -102,7 +107,9 @@ export default async function Agent(
           
           You will be given:
           1. A user query
-          2. Search results from multiple Slack channels containing relevant messages
+          2. Context about the user.
+          3. YOUR CONVERSATION HISTORY WITH THE USER.
+          4. Search results from multiple Slack channels containing relevant messages
           
           The search results have this structure:
           - Array of channels, each containing:
@@ -129,11 +136,13 @@ export default async function Agent(
       },
       {
         role: "user",
-        content: `User query: "${userQuery}"
+        content: `1. User query: "${userQuery}"
         
-        Previous context from memory: ${memoryContext}
+        2. Previous context about User from memory: ${memoryContext}
+
+        3. Conversation History with User: ${JSON.stringify(threadHistory)}
         
-        Relevant Messages: ${JSON.stringify(searchResults)}`,
+        4. Relevant Slack Messages: ${JSON.stringify(searchResults)}`,
       },
     ],
   });
@@ -151,6 +160,7 @@ export default async function Agent(
 async function generateSearchInstructions(
   userQuery: string,
   memoryContext: string,
+  threadHistory: any,
   ctx: AgentContext
 ): Promise<string> {
   const result = await openai.chat.completions.create({
@@ -170,7 +180,9 @@ async function generateSearchInstructions(
         role: "user",
         content: `User query: "${userQuery}"
         
-        User's previous context: ${memoryContext}`,
+        User's previous context: ${memoryContext}
+        
+        Conversation History with User: ${JSON.stringify(threadHistory)}`,
       },
     ],
   });
@@ -278,7 +290,6 @@ async function selectRelevantChannels(
   }
 }
 
-
 // Looks for relevant messages in a channel based on user's query.
 async function searchChannelHistory(
   userId: string,
@@ -382,4 +393,3 @@ async function searchChannelHistory(
   }
 }
 ``;
-
